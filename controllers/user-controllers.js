@@ -1,4 +1,5 @@
 const { User, Thought } = require("../models");
+const { exists } = require("../models/User");
 
 const userController = {
   getAllUser(req, res) {
@@ -59,6 +60,36 @@ const userController = {
         }
         res.json(dbUserData);
       })
+      .catch((err) => res.status(400).json(err));
+  },
+
+  addFriend({ params, body }, res) {
+    User.findById(body.friendId)
+      .then((dbFriendData) => {
+        return User.findOneAndUpdate(
+          { _id: params.userId },
+          {
+            $push: {
+              friends: {
+                friendId: dbFriendData._id,
+                friendName: dbFriendData.username,
+              },
+            },
+          },
+          { new: true }
+        );
+      })
+      .then((dbUserData) => res.json(dbUserData))
+      .catch((err) => res.status(400).json(err));
+  },
+
+  removeFriend({ params }, res) {
+    User.findOneAndUpdate(
+      { _id: params.userId },
+      { $pull: { friends: { friendId: params.friendId } } },
+      { new: true }
+    )
+      .then((dbUserData) => res.json(dbUserData))
       .catch((err) => res.status(400).json(err));
   },
 };
