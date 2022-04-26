@@ -11,6 +11,7 @@ const ReactionSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: 280,
     },
     writtenBy: {
       type: String,
@@ -35,6 +36,7 @@ const ThoughtSchema = new Schema(
     thoughtText: {
       type: String,
       required: "Thought Text Is Required!",
+      maxlength: 280,
     },
     createdAt: {
       type: Date,
