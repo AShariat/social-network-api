@@ -12,6 +12,12 @@ const UserSchema = new Schema(
       type: String,
       unique: true,
       required: "Email Address Is Required!",
+      validate: {
+        validator: function (v) {
+          return /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/.test(v);
+        },
+        message: (props) => `${props.value} Is Not a Valid Email Address!`,
+      },
     },
     thoughts: [
       {

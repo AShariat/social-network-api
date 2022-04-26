@@ -1,5 +1,4 @@
-const { User, Thought } = require("../models");
-const { exists } = require("../models/User");
+const { User } = require("../models");
 
 const userController = {
   getAllUser(req, res) {
