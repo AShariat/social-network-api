@@ -1,4 +1,5 @@
 const { Thought, User } = require("../models");
+const { db } = require("../models/User");
 
 const thoughtController = {
   getAllThought(req, res) {
@@ -23,22 +24,16 @@ const thoughtController = {
 
   createThought({ body }, res) {
     Thought.create(body)
-      .then((dbThoughtData) => {
+      .then(({ _id }) => {
         return User.findOneAndUpdate(
-          { username: body.username },
-          { $push: { thoughts: dbThoughtData } },
+          { _id: body.userId },
+          { $push: { thoughts: _id } },
           { new: true }
         );
       })
-      .then((dbThoughtData) => {
-        if (!dbThoughtData) {
-          res
-            .status(404)
-            .json({ message: "No User Found With This Username!" });
-          return;
-        }
-        res.json(dbThoughtData);
-      })
+      .then(() =>
+        res.json({ message: "Your New Thought Has Been Created Successfully!" })
+      )
       .catch((err) => res.status(400).json(err));
   },
 
