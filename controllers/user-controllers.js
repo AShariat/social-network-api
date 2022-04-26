@@ -64,32 +64,32 @@ const userController = {
   },
 
   addFriend({ params, body }, res) {
-    User.findById(body.friendId)
-      .then((dbFriendData) => {
+    User.findById(body)
+      .then((dbUserData) => {
         return User.findOneAndUpdate(
           { _id: params.userId },
-          {
-            $push: {
-              friends: {
-                friendId: dbFriendData._id,
-                friendName: dbFriendData.username,
-              },
-            },
-          },
+          { $push: { friends: dbUserData } },
           { new: true }
         );
       })
-      .then((dbUserData) => res.json(dbUserData))
+      .then(() =>
+        res.json({ message: "Your New Friend Has Been Added Successfully!" })
+      )
       .catch((err) => res.status(400).json(err));
   },
 
   removeFriend({ params }, res) {
-    User.findOneAndUpdate(
-      { _id: params.userId },
-      { $pull: { friends: { friendId: params.friendId } } },
-      { new: true }
-    )
-      .then((dbUserData) => res.json(dbUserData))
+    User.findById(params.friendId)
+      .then((dbUserData) => {
+        return User.findOneAndUpdate(
+          { _id: params.userId },
+          { $pull: { friends: dbUserData } },
+          { new: true }
+        );
+      })
+      .then(() =>
+        res.json({ message: "Your Friend Has Been Removed Successfully!" })
+      )
       .catch((err) => res.status(400).json(err));
   },
 };
